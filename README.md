@@ -2,7 +2,7 @@
 
 #DecodeLabs Industrial Training
 **intern**  :- Chittem Gowri Sankar 
-**college** :- Viswam Engineering College | CST 2024–28
+**college** :- Viswam Engineering College 
 
 ---
 
