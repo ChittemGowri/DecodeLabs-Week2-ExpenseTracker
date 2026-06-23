@@ -18,23 +18,31 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
 html,body,[class*="css"]{font-family:'Inter',sans-serif;}
-.stApp{background:#060d0f;color:#e2e8f0;}
-.hdr{background:linear-gradient(135deg,#0d1f17,#061510);border:1px solid #1a3a2a;
+
+/* Clean Light Background */
+.stApp{background:#f8fafc;color:#0f172a;}
+
+/* Vibrant Modern Header */
+.hdr{background:linear-gradient(135deg, #0ea5e9, #10b981); border:none; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);
      border-radius:14px;padding:1.5rem 2rem;margin-bottom:1.2rem;position:relative;overflow:hidden;}
-.hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
-              background:linear-gradient(90deg,#10b981,#34d399);}
-.hdr h1{font-size:1.8rem;font-weight:700;color:#ecfdf5;margin:0;}
-.hdr p{color:#6ee7b7;margin:0.2rem 0 0;font-size:.85rem;}
-.card{background:#0d1f17;border:1px solid #1a3a2a;border-radius:9px;padding:.85rem 1.1rem;margin-bottom:.5rem;}
-.ai-box{background:linear-gradient(135deg,#061510,#0d2a1a);border:1px solid #065f46;
-         border-radius:10px;padding:1rem 1.25rem;margin-top:.8rem;}
-.ai-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
-           color:#34d399;margin-bottom:.4rem;font-weight:600;}
+.hdr h1{font-size:1.8rem;font-weight:700;color:#ffffff;margin:0;}
+.hdr p{color:#e0f2fe;margin:0.2rem 0 0;font-size:.85rem;font-weight:500;}
+
+/* Neumorphic White Cards */
+.card{background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem 1.25rem;margin-bottom:.75rem;box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);}
+
+/* Soft Pastel AI Box */
+.ai-box{background:linear-gradient(135deg,#f0fdfa,#ccfbf1);border:1px solid #99f6e4;
+         border-radius:10px;padding:1rem 1.25rem;margin-top:.8rem;box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
+.ai-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;
+           color:#0f766e;margin-bottom:.4rem;font-weight:700;}
+
+/* Light Mode Inputs */
 .stTextInput>div>div>input,.stNumberInput>div>div>input{
-  background:#0d1f17!important;border:1px solid #1a3a2a!important;
-  color:#e2e8f0!important;border-radius:7px!important;}
-.stSelectbox>div>div{background:#0d1f17!important;border:1px solid #1a3a2a!important;
-  color:#e2e8f0!important;border-radius:7px!important;}
+  background:#ffffff!important;border:1px solid #cbd5e1!important;
+  color:#0f172a!important;border-radius:7px!important;}
+.stSelectbox>div>div{background:#ffffff!important;border:1px solid #cbd5e1!important;
+  color:#0f172a!important;border-radius:7px!important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -168,12 +176,12 @@ with tab2:
             st.markdown(f"""
             <div class="card">
               <div style="display:flex;justify-content:space-between;align-items:center">
-                <span>{CAT_ICON.get(e['category'],'📦')} <strong style="color:#ecfdf5">{e['description']}</strong>
-                  <span style="color:#4b5563;font-size:.8rem"> · {e['category']}</span></span>
+                <span>{CAT_ICON.get(e['category'],'📦')} <strong style="color:#1e293b">{e['description']}</strong>
+                  <span style="color:#64748b;font-size:.8rem"> · {e['category']}</span></span>
                 <span style="color:#ef4444;font-weight:700;font-family:'JetBrains Mono',monospace">
                   ₹{e['amount']:.2f}</span>
               </div>
-              <div style="font-size:.72rem;color:#4b5563;margin-top:3px">{e['date']} {e.get('time','')}
+              <div style="font-size:.72rem;color:#64748b;margin-top:3px">{e['date']} {e.get('time','')}
                 {' · '+e['note'] if e.get('note') else ''}</div>
             </div>""", unsafe_allow_html=True)
         buf = io.StringIO()
@@ -197,18 +205,18 @@ with tab3:
                 if cat not in budgets: continue
                 b=budgets[cat]; sp=round(month_cat.get(cat,0),2)
                 pct=min(sp/b*100 if b else 0,100)
-                color="#22c55e" if pct<80 else ("#f59e0b" if pct<100 else "#ef4444")
+                color="#10b981" if pct<80 else ("#f59e0b" if pct<100 else "#ef4444")
                 status="🚨 OVER" if pct>=100 else ("⚠️ Near" if pct>=80 else "✅ OK")
                 st.markdown(f"""
                 <div class="card" style="margin-bottom:.4rem">
                   <div style="display:flex;justify-content:space-between">
                     <strong>{CAT_ICON.get(cat,'')} {cat}</strong>
-                    <span style="color:{color};font-size:.8rem">{status} · ₹{sp:.0f}/₹{b:.0f}</span>
+                    <span style="color:{color};font-size:.8rem;font-weight:600">{status} · ₹{sp:.0f}/₹{b:.0f}</span>
                   </div>
-                  <div style="background:#1a3a2a;border-radius:4px;height:6px;margin:5px 0;overflow:hidden">
+                  <div style="background:#e2e8f0;border-radius:4px;height:6px;margin:5px 0;overflow:hidden">
                     <div style="width:{pct:.0f}%;height:100%;background:{color};border-radius:4px"></div>
                   </div>
-                  <div style="font-size:.72rem;color:#4b5563">{pct:.0f}% · ₹{max(b-sp,0):.0f} left</div>
+                  <div style="font-size:.72rem;color:#64748b;font-weight:600">{pct:.0f}% · ₹{max(b-sp,0):.0f} left</div>
                 </div>""", unsafe_allow_html=True)
 
 with tab4:
@@ -225,7 +233,7 @@ with tab4:
                     r = nvidia(api_key,f"Spending this month: {bk}. Budgets: {bu}. 1)Top concern 2)Saving tip 3)Month-end prediction. Under 110 words.",
                                "You are a personal finance advisor for Indian students. Use ₹. Be direct.")
                 st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Spending Analysis</div>'
-                            f'<div style="color:#a7f3d0;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+                            f'<div style="color:#1e293b;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
         if c2.button("💡 Saving Tips", use_container_width=True):
             if not expenses: st.info("Add expenses first.")
             else:
@@ -235,7 +243,7 @@ with tab4:
                     r = nvidia(api_key,f"Top spending: {cats}. Give 3 specific saving tips for Indian college student. Under 90 words.",
                                "You are a frugal finance coach. Use ₹. Be specific.")
                 st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Saving Tips</div>'
-                            f'<div style="color:#a7f3d0;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+                            f'<div style="color:#1e293b;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
         st.divider()
         uq = st.text_input("Ask your finance advisor")
         if st.button("Ask →") and uq:
@@ -243,7 +251,7 @@ with tab4:
             with st.spinner():
                 r = nvidia(api_key,ctx,"Personal finance advisor for Indian students. Use ₹. Under 120 words.")
             st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Answer</div>'
-                        f'<div style="color:#a7f3d0;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+                        f'<div style="color:#1e293b;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
 
 with tab5:
     if not expenses: st.info("Add expenses to see charts.")
@@ -253,17 +261,4 @@ with tab5:
             bcd = by_cat(expenses)
             fig = go.Figure(go.Pie(labels=[f"{CAT_ICON.get(k,'')} {k}" for k in bcd],
                                    values=list(bcd.values()),hole=0.5,
-                                   marker_colors=["#10b981","#3b82f6","#f59e0b","#8b5cf6","#ef4444","#06b6d4","#6b7280"]))
-            fig.update_layout(title="By Category",paper_bgcolor="rgba(0,0,0,0)",
-                              plot_bgcolor="rgba(0,0,0,0)",font_color="#e2e8f0",
-                              height=280,margin=dict(t=40,b=0,l=0,r=0))
-            st.plotly_chart(fig,use_container_width=True)
-        with c2:
-            monthly = defaultdict(float)
-            for e in expenses: monthly[e.get("month","")] += e["amount"]
-            months = sorted(monthly.keys())
-            fig2 = go.Figure(go.Bar(x=months,y=[monthly[m] for m in months],marker_color="#10b981"))
-            fig2.update_layout(title="Monthly Trend",paper_bgcolor="rgba(0,0,0,0)",
-                               plot_bgcolor="rgba(0,0,0,0)",font_color="#e2e8f0",
-                               height=280,margin=dict(t=40,b=0,l=0,r=0))
-            st.plotly_chart(fig2,use_container_width=True)
+                                   marker_colors=["#10b981","#3b82f6","#f
