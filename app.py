@@ -1,6 +1,6 @@
 """
 BudgetIQ AI — DecodeLabs Internship 2026
-Gowri Shankar | Viswam Engineering College, JNTUA
+Chittem Gowri Sankar | Viswam Engineering College, JNTUA
 """
 import streamlit as st
 import plotly.graph_objects as go
@@ -14,74 +14,27 @@ BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
 EXPENSE_FILE = os.path.join(BASE_DIR, "expenses.json")
 BUDGET_FILE  = os.path.join(BASE_DIR, "budgets.json")
 
-# --- UPDATED LIGHT & PLEASANT CSS ---
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
-html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-}
-.stApp {
-    background: #f8fafc;
-    color: #1e293b;
-}
-.hdr {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 1.5rem 2rem;
-    margin-bottom: 1.2rem;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-}
-.hdr::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 4px;
-    background: linear-gradient(90deg, #10b981, #34d399, #3b82f6);
-}
-.hdr h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #064e3b;
-    margin: 0;
-}
-.hdr p {
-    color: #64748b;
-    margin: 0.3rem 0 0;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-.card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 1rem 1.2rem;
-    margin-bottom: 0.8rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-}
-.ai-box {
-    background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
-    border: 1px solid #a7f3d0;
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-    margin-top: 0.8rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-.ai-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #059669;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
-}
+html,body,[class*="css"]{font-family:'Inter',sans-serif;}
+.stApp{background:#060d0f;color:#e2e8f0;}
+.hdr{background:linear-gradient(135deg,#0d1f17,#061510);border:1px solid #1a3a2a;
+     border-radius:14px;padding:1.5rem 2rem;margin-bottom:1.2rem;position:relative;overflow:hidden;}
+.hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+              background:linear-gradient(90deg,#10b981,#34d399);}
+.hdr h1{font-size:1.8rem;font-weight:700;color:#ecfdf5;margin:0;}
+.hdr p{color:#6ee7b7;margin:0.2rem 0 0;font-size:.85rem;}
+.card{background:#0d1f17;border:1px solid #1a3a2a;border-radius:9px;padding:.85rem 1.1rem;margin-bottom:.5rem;}
+.ai-box{background:linear-gradient(135deg,#061510,#0d2a1a);border:1px solid #065f46;
+         border-radius:10px;padding:1rem 1.25rem;margin-top:.8rem;}
+.ai-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;
+           color:#34d399;margin-bottom:.4rem;font-weight:600;}
+.stTextInput>div>div>input,.stNumberInput>div>div>input{
+  background:#0d1f17!important;border:1px solid #1a3a2a!important;
+  color:#e2e8f0!important;border-radius:7px!important;}
+.stSelectbox>div>div{background:#0d1f17!important;border:1px solid #1a3a2a!important;
+  color:#e2e8f0!important;border-radius:7px!important;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -145,7 +98,7 @@ alerts = [(c,month_cat.get(c,0),b,month_cat.get(c,0)/b*100 if b else 0)
 st.markdown("""
 <div class="hdr">
   <h1>💰 BudgetIQ AI</h1>
-  <p>DecodeLabs Internship 2026 · Gowri Shankar · NVIDIA NIM</p>
+  <p>DecodeLabs Internship 2026 · Chittem Gowri Sankar · NVIDIA NIM</p>
 </div>""", unsafe_allow_html=True)
 
 for cat, spent, budget, pct in alerts:
@@ -193,4 +146,124 @@ with tab1:
             else: st.success(f"✅ Added ₹{exp['amount']:.2f}")
             st.rerun()
     if api_key and b2.button("🤖 Auto-Categorize", use_container_width=True):
-        if not desc.strip(): st.warning("Enter description
+        if not desc.strip(): st.warning("Enter description first.")
+        else:
+            with st.spinner():
+                r = nvidia(api_key, f"Categorize '{desc}' into ONE of: {','.join(CATEGORIES)}. Reply ONLY the category name.",
+                           "You are an expense categorizer. Reply with only the category name.")
+            suggested = next((c for c in CATEGORIES if c.lower() in r.lower()), "Other")
+            st.success(f"🤖 Suggested: {CAT_ICON.get(suggested,'')} **{suggested}**")
+
+with tab2:
+    st.subheader("Expense List")
+    if not expenses: st.info("No expenses yet.")
+    else:
+        c1,c2 = st.columns(2)
+        fc = c1.selectbox("Category filter", ["All"]+CATEGORIES)
+        fm = c2.selectbox("Month filter", ["All"]+sorted({e.get("month","") for e in expenses},reverse=True))
+        show = [e for e in expenses if (fc=="All" or e["category"]==fc) and (fm=="All" or e.get("month")==fm)]
+        show = sorted(show, key=lambda e:e["date"], reverse=True)
+        st.markdown(f"**{len(show)} entries · Total: ₹{total(show):.2f}**")
+        for e in show:
+            st.markdown(f"""
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span>{CAT_ICON.get(e['category'],'📦')} <strong style="color:#ecfdf5">{e['description']}</strong>
+                  <span style="color:#4b5563;font-size:.8rem"> · {e['category']}</span></span>
+                <span style="color:#ef4444;font-weight:700;font-family:'JetBrains Mono',monospace">
+                  ₹{e['amount']:.2f}</span>
+              </div>
+              <div style="font-size:.72rem;color:#4b5563;margin-top:3px">{e['date']} {e.get('time','')}
+                {' · '+e['note'] if e.get('note') else ''}</div>
+            </div>""", unsafe_allow_html=True)
+        buf = io.StringIO()
+        csv.DictWriter(buf, fieldnames=["id","date","category","amount","description","note"]).writeheader()
+        csv.DictWriter(buf, fieldnames=["id","date","category","amount","description","note"]).writerows(show)
+        st.download_button("⬇️ Export CSV", buf.getvalue(), "expenses.csv", "text/csv")
+
+with tab3:
+    st.subheader("Monthly Budget Tracker")
+    c1,c2 = st.columns(2)
+    with c1:
+        bc = st.selectbox("Category", CATEGORIES, format_func=lambda x:f"{CAT_ICON[x]} {x}", key="bc")
+        ba = st.number_input("Monthly budget (₹)", min_value=0.0, step=100.0, format="%.2f")
+        if st.button("💾 Save", type="primary"):
+            budgets[bc]=round(float(ba),2); save_bud(budgets)
+            st.success(f"✅ {bc} = ₹{ba:.2f}/month"); st.rerun()
+    with c2:
+        if not budgets: st.info("Set budgets on the left.")
+        else:
+            for cat in CATEGORIES:
+                if cat not in budgets: continue
+                b=budgets[cat]; sp=round(month_cat.get(cat,0),2)
+                pct=min(sp/b*100 if b else 0,100)
+                color="#22c55e" if pct<80 else ("#f59e0b" if pct<100 else "#ef4444")
+                status="🚨 OVER" if pct>=100 else ("⚠️ Near" if pct>=80 else "✅ OK")
+                st.markdown(f"""
+                <div class="card" style="margin-bottom:.4rem">
+                  <div style="display:flex;justify-content:space-between">
+                    <strong>{CAT_ICON.get(cat,'')} {cat}</strong>
+                    <span style="color:{color};font-size:.8rem">{status} · ₹{sp:.0f}/₹{b:.0f}</span>
+                  </div>
+                  <div style="background:#1a3a2a;border-radius:4px;height:6px;margin:5px 0;overflow:hidden">
+                    <div style="width:{pct:.0f}%;height:100%;background:{color};border-radius:4px"></div>
+                  </div>
+                  <div style="font-size:.72rem;color:#4b5563">{pct:.0f}% · ₹{max(b-sp,0):.0f} left</div>
+                </div>""", unsafe_allow_html=True)
+
+with tab4:
+    st.subheader("🤖 NVIDIA AI Financial Advisor")
+    if not api_key: st.warning("Enter NVIDIA API key in sidebar.")
+    else:
+        c1,c2 = st.columns(2)
+        if c1.button("📊 Analyze Spending", type="primary", use_container_width=True):
+            if not expenses: st.info("Add expenses first.")
+            else:
+                bk = ", ".join(f"{k}:₹{v:.0f}" for k,v in by_cat(month_exp).items())
+                bu = ", ".join(f"{k}:₹{v:.0f}" for k,v in budgets.items()) if budgets else "not set"
+                with st.spinner():
+                    r = nvidia(api_key,f"Spending this month: {bk}. Budgets: {bu}. 1)Top concern 2)Saving tip 3)Month-end prediction. Under 110 words.",
+                               "You are a personal finance advisor for Indian students. Use ₹. Be direct.")
+                st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Spending Analysis</div>'
+                            f'<div style="color:#a7f3d0;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+        if c2.button("💡 Saving Tips", use_container_width=True):
+            if not expenses: st.info("Add expenses first.")
+            else:
+                top = sorted(by_cat(month_exp).items(),key=lambda x:-x[1])[:3]
+                cats = ", ".join(f"{k}(₹{v:.0f})" for k,v in top)
+                with st.spinner():
+                    r = nvidia(api_key,f"Top spending: {cats}. Give 3 specific saving tips for Indian college student. Under 90 words.",
+                               "You are a frugal finance coach. Use ₹. Be specific.")
+                st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Saving Tips</div>'
+                            f'<div style="color:#a7f3d0;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+        st.divider()
+        uq = st.text_input("Ask your finance advisor")
+        if st.button("Ask →") and uq:
+            ctx = f"Monthly spending: {by_cat(month_exp)}. Budgets: {budgets}. Q: {uq}"
+            with st.spinner():
+                r = nvidia(api_key,ctx,"Personal finance advisor for Indian students. Use ₹. Under 120 words.")
+            st.markdown(f'<div class="ai-box"><div class="ai-label">🤖 Answer</div>'
+                        f'<div style="color:#a7f3d0;white-space:pre-wrap">{r}</div></div>',unsafe_allow_html=True)
+
+with tab5:
+    if not expenses: st.info("Add expenses to see charts.")
+    else:
+        c1,c2 = st.columns(2)
+        with c1:
+            bcd = by_cat(expenses)
+            fig = go.Figure(go.Pie(labels=[f"{CAT_ICON.get(k,'')} {k}" for k in bcd],
+                                   values=list(bcd.values()),hole=0.5,
+                                   marker_colors=["#10b981","#3b82f6","#f59e0b","#8b5cf6","#ef4444","#06b6d4","#6b7280"]))
+            fig.update_layout(title="By Category",paper_bgcolor="rgba(0,0,0,0)",
+                              plot_bgcolor="rgba(0,0,0,0)",font_color="#e2e8f0",
+                              height=280,margin=dict(t=40,b=0,l=0,r=0))
+            st.plotly_chart(fig,use_container_width=True)
+        with c2:
+            monthly = defaultdict(float)
+            for e in expenses: monthly[e.get("month","")] += e["amount"]
+            months = sorted(monthly.keys())
+            fig2 = go.Figure(go.Bar(x=months,y=[monthly[m] for m in months],marker_color="#10b981"))
+            fig2.update_layout(title="Monthly Trend",paper_bgcolor="rgba(0,0,0,0)",
+                               plot_bgcolor="rgba(0,0,0,0)",font_color="#e2e8f0",
+                               height=280,margin=dict(t=40,b=0,l=0,r=0))
+            st.plotly_chart(fig2,use_container_width=True)
