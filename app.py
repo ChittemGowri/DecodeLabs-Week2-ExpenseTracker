@@ -1,7 +1,3 @@
-"""
-BudgetIQ AI — DecodeLabs Internship 2026
-Chittem Gowri Sankar | Viswam Engineering College, JNTUA
-"""
 import streamlit as st
 import plotly.graph_objects as go
 import json, os, csv, io, requests
@@ -261,4 +257,17 @@ with tab5:
             bcd = by_cat(expenses)
             fig = go.Figure(go.Pie(labels=[f"{CAT_ICON.get(k,'')} {k}" for k in bcd],
                                    values=list(bcd.values()),hole=0.5,
-                                   marker_colors=["#10b981","#3b82f6","#f
+                                   marker_colors=["#10b981","#3b82f6","#f59e0b","#8b5cf6","#ef4444","#06b6d4","#6b7280"]))
+            fig.update_layout(title="By Category",paper_bgcolor="rgba(0,0,0,0)",
+                              plot_bgcolor="rgba(0,0,0,0)",font_color="#475569",
+                              height=280,margin=dict(t=40,b=0,l=0,r=0))
+            st.plotly_chart(fig,use_container_width=True)
+        with c2:
+            monthly = defaultdict(float)
+            for e in expenses: monthly[e.get("month","")] += e["amount"]
+            months = sorted(monthly.keys())
+            fig2 = go.Figure(go.Bar(x=months,y=[monthly[m] for m in months],marker_color="#10b981"))
+            fig2.update_layout(title="Monthly Trend",paper_bgcolor="rgba(0,0,0,0)",
+                               plot_bgcolor="rgba(0,0,0,0)",font_color="#475569",
+                               height=280,margin=dict(t=40,b=0,l=0,r=0))
+            st.plotly_chart(fig2,use_container_width=True)
